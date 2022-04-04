@@ -42,4 +42,17 @@ class Manager
         $querySql = $db->prepare($query);
         $querySql->execute($data);
     }
+
+    public function update($data,$idArticle){
+        $db = $this->dbConnect();
+        $query = "UPDATE {$this->table} SET ";
+        $field = array_keys($data);
+        $query .= implode(",",$field)." = ?";
+        $myArray = array_map(function($value){
+            return $value;
+        },array_values($data));
+        $query .= " WHERE idArticle ={$idArticle}";
+        $querySql = $db->prepare($query);
+        return $querySql->execute($myArray);
+    }
 }

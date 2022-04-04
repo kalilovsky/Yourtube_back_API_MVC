@@ -38,6 +38,13 @@ class ArticlesController extends Controller
     }
 
     public function getAllArticles(){
-        echo(json_encode($this->model->getAll("INNER JOIN users ON users.idUser = articles.idUser")));
+        echo(json_encode($this->model->getAll("INNER JOIN users ON users.idUser = articles.idUser INNER JOIN categories ON articles.idCategory = categories.idCategorie")));
+    }
+
+    public function updateView(){
+        $idArticle = filter_input(INPUT_POST,"idArticle",FILTER_VALIDATE_INT);
+        $allData = $this->model->getAll("WHERE idArticle = {$idArticle}");
+        $data["viewCount"] = $allData[0]["viewCount"] + 1;
+        echo json_encode($this->model->update($data,$idArticle));
     }
 }
