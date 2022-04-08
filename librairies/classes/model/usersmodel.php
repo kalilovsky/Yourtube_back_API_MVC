@@ -4,6 +4,9 @@ namespace Model;
 
 class UsersModel extends Manager
 {
+
+    protected $table = "users";
+
     public function loginUser($userInfo)
     {
         $db = $this->dbConnect();
@@ -81,7 +84,7 @@ class UsersModel extends Manager
     {
         
         //session_start();
-        $_SESSION["mail"] = $resultSql["email"];
+        $_SESSION["email"] = $resultSql["email"];
         $_SESSION["firstname"] = $resultSql["firstname"];
         $_SESSION["lastname"] = $resultSql["lastname"];
         $_SESSION["photo"] = $resultSql["profilPhoto"];
@@ -107,10 +110,5 @@ class UsersModel extends Manager
         return true;
     }
 
-    public function updatePhoto($userInfo, $file)
-    {
-        $db = $this->dbConnect();
-        $updateSql = "UPDATE users SET photouser = ? WHERE idusers = ?";
-        $querySql = $db->prepare($updateSql)->execute(array($file, $userInfo["idusers"]));
-    }
+    
 }

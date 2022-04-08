@@ -12,7 +12,7 @@ class Manager
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC];        
         try {
-            $db = new PDO('mysql:host=localhost;dbname=urtube;charset=utf8', 'khalil', 'root',$options);
+            $db = new PDO('mysql:host=eu-cdbr-west-02.cleardb.net;dbname=heroku_3f137d66a575c1e;charset=utf8', 'b54924f5110e94', '4acc17a0',$options);
             return $db;
         } catch (PDOException $e) {
             die('Erreur : ' . $e->getMessage());
@@ -47,12 +47,29 @@ class Manager
         $db = $this->dbConnect();
         $query = "UPDATE {$this->table} SET ";
         $field = array_keys($data);
-        $query .= implode(",",$field)." = ?";
-        $myArray = array_map(function($value){
-            return $value;
-        },array_values($data));
-        $query .= " WHERE idArticle ={$idArticle}";
+        $query .= implode("= ? ,",$field)." = ?";
+        // $myArray = array_map(function($key , $value){
+        //     return $key . "=" . $value;
+        // },$field,array_values($data));
+        $myArray = array_values($data);
+        $condition =  array_map(function($key,$value){
+            return $key . "=" .$value;   },array_keys($idArticle),array_values($idArticle));
+        $query .= " WHERE " . implode(" AND ",$condition);
         $querySql = $db->prepare($query);
-        return $querySql->execute($myArray);
+        $querySql->execute($myArray);
+        return $idArticle;
+    }
+
+    public function delete($data){
+        $db = $this->dbConnect();
+        $query = "DELETE FROM {$this->table} WHERE ";
+        $field = array_keys($data);
+        $query .= $field[0] . "=" . $data[$field[0]]; 
+        $querySql = $db->prepare($query);
+        $querySql->execute();
+        if ($querySql) {
+            return 'delete done';
+        }
+        return "problem detected";
     }
 }

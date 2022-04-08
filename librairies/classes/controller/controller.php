@@ -33,5 +33,18 @@ abstract class Controller
                 return false;
             }
         }
+    }public function uploadFileImg()
+    {
+        $file = $_FILES;
+        if ($file["file"]["error"] == 0) {
+            $tmpName = $file["file"]['tmp_name'];
+            $name = $file["file"]['name'];
+            $acceptedFile = (getimagesize($tmpName)) && $file["file"]['size'] < (6000000);
+            if ($acceptedFile) {
+                return move_uploaded_file($tmpName, 'public/userprofile/' . $name);
+            }else{
+                return false;
+            }
+        }
     }
 }

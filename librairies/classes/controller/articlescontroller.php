@@ -43,8 +43,16 @@ class ArticlesController extends Controller
 
     public function updateView(){
         $idArticle = filter_input(INPUT_POST,"idArticle",FILTER_VALIDATE_INT);
+        $id["idArticle"] = $idArticle;
         $allData = $this->model->getAll("WHERE idArticle = {$idArticle}");
         $data["viewCount"] = $allData[0]["viewCount"] + 1;
-        echo json_encode($this->model->update($data,$idArticle));
+        echo json_encode($this->model->update($data,$id));
+    }
+
+    public function deleteArticle(){
+        //il faudrait rajouter une vérification d'identité que l'article appartient réelement à l'utilisateur
+        //pour le laisser effacer
+        $data["idArticle"] = filter_input(INPUT_GET,"idArticle",FILTER_VALIDATE_INT);
+        echo $this->model->delete($data);
     }
 }
