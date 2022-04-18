@@ -90,7 +90,7 @@ class UsersModel extends Manager
         $_SESSION["photo"] = $resultSql["profilPhoto"];
         $_SESSION["idUser"] = $resultSql["idUser"];
         $_SESSION["userType"] = $resultSql["usertype"];
-        $_SESSION["pwd"] = $resultSql["pwd"];
+        // $_SESSION["pwd"] = $resultSql["pwd"];
         $_SESSION["pseudo"] = $resultSql["pseudo"];
         $_SESSION["isConnected"]=true;
         $_SESSION["message"]="Users well registred";

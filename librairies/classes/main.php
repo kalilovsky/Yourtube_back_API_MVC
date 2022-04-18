@@ -13,7 +13,6 @@ class Main {
         session_start();
         $controllerName = self::getControllerName();
         $actionName = self::getActionName();
-
         $controller = new $controllerName;
         $controller->$actionName();
     }

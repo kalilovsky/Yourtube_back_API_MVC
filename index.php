@@ -1,5 +1,5 @@
 <?php
-header('Access-Control-Allow-Origin: https://urtubereactjs.herokuapp.com');
+header('Access-Control-Allow-Origin: http://localhost:8080');
 // header('Access-Control-Allow-Origin: http://localhost:46059/');
 header('Access-Control-Allow-Credentials: true');
 header('Content-Type: application/json; charset=utf-8');

@@ -41,6 +41,74 @@ class ArticlesController extends Controller
         echo(json_encode($this->model->getAll("INNER JOIN users ON users.idUser = articles.idUser INNER JOIN categories ON articles.idCategory = categories.idCategorie")));
     }
 
+    public function searchArticles(){
+        $query = "INNER JOIN users ON users.idUser = articles.idUser INNER JOIN categories ON articles.idCategory = categories.idCategorie ";
+        $filter = [];
+        $query1  ="";
+        $where = false;
+        $orderBy = false;
+        if (isset($_GET["fileType"])){
+            $filter['fileType'] = filter_input(INPUT_GET,"fileType",FILTER_DEFAULT);
+            $query1 = "WHERE fileType='{$filter['fileType']}' ";
+            $where = true;
+        }
+        if (isset($_GET["idCategory"])){
+            $filter['idCategory'] = filter_input(INPUT_GET,"idCategory",FILTER_VALIDATE_INT);
+            if(isset($filter['fileType'])){
+                $query1 .= "AND idCategory= {$filter['idCategory']}";
+                $where = true;
+            }else{
+                $query1 = "WHERE idCategory= {$filter['idCategory']}";
+                $where = true;
+            }
+        }
+        if (isset($_GET["text"])){
+            $filter['filterByText'] = filter_input(INPUT_GET,"text",FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            if($where){
+                $query1 .= "AND (title LIKE '%{$filter['filterByText']}%' OR smallDesc like '%{$filter['filterByText']}%')";
+            }else{
+                $query1 .= "WHERE title LIKE '%{$filter['filterByText']}%' OR smallDesc like '%{$filter['filterByText']}%'";
+                $where = true;
+            }
+        }
+        if (isset($_GET["tags"])){
+            $filter['tags'] = filter_input(INPUT_GET,"tags",FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            if($where){
+                $query1 .= "AND tag like '%{$filter['tags']}%'";
+            }else{
+                $query1 .= "WHERE tag like '%{$filter['tags']}%'";
+                $where = true;
+            }
+        }
+        if (isset($_GET["creationDate"])){
+            $filter['creationDate'] = filter_input(INPUT_GET,"creationDate",FILTER_DEFAULT);
+            $query1 .= " ORDER BY creationDate {$filter['creationDate']}";
+            $orderBy = true;
+        }
+        if (isset($_GET["viewCount"])){
+            $filter['viewCount'] = filter_input(INPUT_GET,"viewCount",FILTER_DEFAULT);
+            if($orderBy){
+                $query1 .= ", viewCount {$filter['viewCount']}";
+            }else{
+                $query1 .= " ORDER BY viewCount {$filter['viewCount']}";
+
+            }
+        }
+            echo(json_encode($this->model->getAll($query . $query1)));
+    }
+
+    
+
+    public function getArticleById(){
+        $idArticle = filter_input(INPUT_GET,'id',FILTER_VALIDATE_INT);
+        $query ="INNER JOIN users ON users.idUser = articles.idUser INNER JOIN categories ON articles.idCategory = categories.idCategorie WHERE idArticle = ".$idArticle;
+        $allData = $this->model->getAll("WHERE idArticle = {$idArticle}");
+        $data["viewCount"] = $allData[0]["viewCount"] + 1;
+        $id["idArticle"] = $idArticle;
+        $this->model->update($data,$id);
+        echo(json_encode($this->model->getAll($query)));
+    }
+
     public function updateView(){
         $idArticle = filter_input(INPUT_POST,"idArticle",FILTER_VALIDATE_INT);
         $id["idArticle"] = $idArticle;

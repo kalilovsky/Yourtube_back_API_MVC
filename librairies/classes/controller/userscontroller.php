@@ -5,7 +5,9 @@ class UsersController extends Controller{
     protected $modelName = "UsersModel";
 
     public function login(){
-        echo json_encode($this->model->loginUser($_POST));
+        $response = json_encode($this->model->loginUser($_POST));
+        setcookie('userInfo',$response,time()+(60*30),'/');
+        echo $response;
     }
     public function register(){
        echo json_encode($this->model->registerUser($_POST));
@@ -30,6 +32,22 @@ class UsersController extends Controller{
         $response = ($this->model->getAll("WHERE idUser=".$idUser["idUser"]))[0];
         $response["isConnected"] = true;
         echo json_encode($response);
+    }
+    public function disconnect(){
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+            setcookie('userInfo', '', time() - 42000,
+                $params["path"], $params["domain"],
+                $params["secure"], $params["httponly"]
+            );
+        }
+        session_unset();
+        session_destroy();
+        echo "disconnected";
     }
 
 }
