@@ -109,6 +109,16 @@ class ArticlesController extends Controller
         echo(json_encode($this->model->getAll($query)));
     }
 
+    public function getArticleByUserId(){
+        if(isset($_SESSION["idUser"])){
+            $idUser = filter_input(INPUT_GET,'idUser',FILTER_VALIDATE_INT);
+            $query ="INNER JOIN users ON users.idUser = articles.idUser INNER JOIN categories ON articles.idCategory = categories.idCategorie WHERE articles.idUser = ".$idUser;
+            echo(json_encode($this->model->getAll($query)));
+        }else{
+            echo(json_encode("Not Authorised."));
+        }
+    }
+
     public function updateView(){
         $idArticle = filter_input(INPUT_POST,"idArticle",FILTER_VALIDATE_INT);
         $id["idArticle"] = $idArticle;
@@ -120,7 +130,11 @@ class ArticlesController extends Controller
     public function deleteArticle(){
         //il faudrait rajouter une vérification d'identité que l'article appartient réelement à l'utilisateur
         //pour le laisser effacer
+        if(isset($_SESSION["idUser"])){
         $data["idArticle"] = filter_input(INPUT_GET,"idArticle",FILTER_VALIDATE_INT);
         echo $this->model->delete($data);
+        }else{
+            echo(json_encode("Not Authorised."));
+        }
     }
 }

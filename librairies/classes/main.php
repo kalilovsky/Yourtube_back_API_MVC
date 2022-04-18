@@ -8,8 +8,6 @@ class Main {
     const defaultAction = "index";
 
     public static function start(){
-        if (!isset($_SESSION)){
-        }
         session_start();
         $controllerName = self::getControllerName();
         $actionName = self::getActionName();
